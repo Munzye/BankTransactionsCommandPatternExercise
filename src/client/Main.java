@@ -30,7 +30,7 @@ public class Main {
         //Depósito
         cajero.ejecutarOperacion(depositar);
 
-        //Withdraw (retiro)
+        //Withdrawal (retiro)
         cajero.ejecutarOperacion(retirar);
 
         //Transferencia
