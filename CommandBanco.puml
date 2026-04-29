@@ -1,0 +1,86 @@
+@startuml
+skinparam classAttributeIconSize 0
+title Ejercicio patrón Command - Sistema bancario
+
+package "command" {
+    interface Command <<Command>> {
+        + ejecutar() : void
+        + deshacer() : void
+    }
+
+    class DepositarCommand <<ConcreteCommand>> {
+        - cuenta : CuentaBancaria
+        - monto : double
+        - ejecutado : boolean
+        + ejecutar() : void
+        + deshacer() : void
+    }
+
+    class RetirarCommand <<ConcreteCommand>> {
+        - cuenta : CuentaBancaria
+        - monto : double
+        - ejecutado : boolean
+        + ejecutar() : void
+        + deshacer() : void
+    }
+
+    class TransferirCommand <<ConcreteCommand>> {
+        - cuentaOrigen : CuentaBancaria
+        - cuentaDestino : CuentaBancaria
+        - monto : double
+        - ejecutado : boolean
+        + ejecutar() : void
+        + deshacer() : void
+    }
+
+    class ConsultarSaldoCommand <<ConcreteCommand>> {
+        - cuenta : CuentaBancaria
+        + ejecutar() : void
+        + deshacer() : void
+    }
+}
+
+package "model" {
+    class CuentaBancaria <<Receiver>> {
+        - numeroCuenta : String
+        - titular : String
+        - saldo : double
+        + depositar(monto : double) : void
+        + retirar(monto : double) : boolean
+        + transferir(cuentaDestino : CuentaBancaria, monto : double) : boolean
+        + consultarSaldo() : double
+        + getNumeroCuenta() : String
+        + getTitular() : String
+        + getSaldo() : double
+    }
+}
+
+package "invoker" {
+    class CajeroAutomatico <<Invoker>> {
+        - historial : Stack<Command>
+        + ejecutarOperacion(command : Command) : void
+        + deshacerUltimaOperacion() : void
+    }
+}
+
+package "client" {
+    class Main <<Client>> {
+        + main(args : String[]) : void
+    }
+}
+
+Command <|.. DepositarCommand
+Command <|.. RetirarCommand
+Command <|.. TransferirCommand
+Command <|.. ConsultarSaldoCommand
+
+DepositarCommand --> CuentaBancaria : receiver
+RetirarCommand --> CuentaBancaria : receiver
+TransferirCommand --> CuentaBancaria : origen/destino
+ConsultarSaldoCommand --> CuentaBancaria : receiver
+
+CajeroAutomatico --> Command : ejecuta
+Main --> CajeroAutomatico : usa
+Main --> CuentaBancaria : crea
+Main --> Command : configura
+@enduml
